@@ -1,0 +1,6 @@
+
+
+    return inst;
+}
+
+} // namespace CPUSimulation

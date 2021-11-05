@@ -9,12 +9,9 @@ namespace CPUSimulation
 {
 
 using regValue_t = uint32_t;
-using instCode_t = uint32_t;
 using bitField_t = uint32_t;
 
-constexpr size_t CMD_BITS_NUM = 32;
-
-constexpr size_t REGS_NUM = 32;
+constexpr size_t FIELDS_BITS_NUM = 32;
 
 enum regId_t : char
 {
@@ -24,10 +21,7 @@ enum regId_t : char
     R18, R19, R1A, R1B, R1C, R1D, R1E, R1F
 };
 
-enum instClass_t : char
-{
-    R, I, S, B, U, J
-};
+constexpr regId_t MAX_REG_ID = regId_t::R1F;
 
 enum class loadStatus_t : char
 {

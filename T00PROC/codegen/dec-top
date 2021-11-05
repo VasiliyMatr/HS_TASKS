@@ -1,0 +1,13 @@
+
+#include "core.hh"
+#include "exec.hh"
+
+namespace CPUSimulation
+{
+
+Core::Instruction Core::Instruction::decode( bitField_t code )
+{
+    Instruction inst {};
+    inst.dest_ = static_cast<regId_t> (getBits<11, 7> (code));
+    inst.src1_ = static_cast<regId_t> (getBits<19, 15> (code));
+    inst.src1_ = static_cast<regId_t> (getBits<24, 20> (code));

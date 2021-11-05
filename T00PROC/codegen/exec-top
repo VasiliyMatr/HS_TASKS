@@ -1,0 +1,9 @@
+
+#include "core.hh"
+
+#ifndef EXEC_HH_INCL
+#define EXEC_HH_INCL
+
+namespace CPUSimulation
+{
+

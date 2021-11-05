@@ -10,81 +10,46 @@ loadStatus_t Core::load( const char* binaryName )
 {
     std::ifstream binary (binaryName, std::ios::binary);
 
-    binary.seekg (0, std::ios_base::seekdir::_S_end);
+    binary.seekg (0, std::ios_base::end);
     size_t binarySize = binary.tellg ();
-    binary.seekg (0, std::ios_base::seekdir::_S_beg);
+    binary.seekg (0, std::ios_base::beg);
 
     if (binarySize > ram_.size ())
         return loadStatus_t::TO_BIG_FILE;
 
     binary.read (ram_.data (), binarySize);
+
+    pc_ = 0;
+    codeSize_ = binarySize;
+
+    return loadStatus_t::OK;
 }
 
 execStatus_t Core::exec()
 {
     while (true)
     {
+        if (pc_ >= codeSize_)
+            return execStatus_t::OK;
+
         // Fetch
-        instCode_t instCode = 0;
-        execStatus_t fetchStatus = ram_.read (pc_, sizeof (instCode_t), instCode);
+        bitField_t instCode = 0;
+        execStatus_t fetchStatus = ram_.read (pc_, sizeof (bitField_t), instCode);
         if (fetchStatus != execStatus_t::OK)
             return fetchStatus;
 
-        // Partial decode
-        Instruction instr {instCode};
+        // Decode
+        Instruction instr  = Instruction::decode (instCode);
 
         // Execution
-        execStatus_t execStatus = execInstr (instr);
+        newPc_ = pc_ + 4;
+        execStatus_t execStatus = instr.exec (this);
         if (execStatus != execStatus_t::OK)
             return execStatus;
+        pc_ = newPc_;
 
         // No separate memory & WB stages for now.
     }
-}
-
-execStatus_t Core::execInstr( const Instruction& instr )
-{
-    switch (instr.iClass ())
-    {
-        case R: return execRType (instr);
-        case I: return execIType (instr);
-        case S: return execSType (instr);
-        case B: return execBType (instr);
-        case U: return execUType (instr);
-        case J: return execJType (instr);
-
-        default: return execStatus_t::UNKNOWN_INSTR;
-    }
-}
-
-execStatus_t Core::execRType( const Instruction& instr )
-{
-    return execStatus_t::UNKNOWN_INSTR;
-}
-
-execStatus_t Core::execIType( const Instruction& instr )
-{
-    return execStatus_t::UNKNOWN_INSTR;
-}
-
-execStatus_t Core::execSType( const Instruction& instr )
-{
-    return execStatus_t::UNKNOWN_INSTR;
-}
-
-execStatus_t Core::execBType( const Instruction& instr )
-{
-    return execStatus_t::UNKNOWN_INSTR;
-}
-
-execStatus_t Core::execUType( const Instruction& instr )
-{
-    return execStatus_t::UNKNOWN_INSTR;
-}
-
-execStatus_t Core::execJType( const Instruction& instr )
-{
-    return execStatus_t::UNKNOWN_INSTR;
 }
 
 } // namespace CPUSimulation

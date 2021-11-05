@@ -44,7 +44,7 @@ public:
         dest = (dest << (size * 8)) >> (size * 8);
 
         for (size_t i = 0; i < size; ++i)
-            dest |= data_[addr + i];
+            dest |= static_cast<uint8_t> (data_[addr + size - 1 - i]) << (i * 8);
 
         return execStatus_t::OK;
     }
@@ -55,7 +55,7 @@ public:
             return execStatus_t::SEGFAULT;
 
         for (size_t i = 0; i < size; ++i)
-            data_[addr + i] = src >> (i * 8);
+            data_[addr + size - 1 - i] = static_cast<uint8_t> (src >> (i * 8));
 
         return execStatus_t::OK;
     }
